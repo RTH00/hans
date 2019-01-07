@@ -1,0 +1,1 @@
+DELETE FROM job_running_instances;

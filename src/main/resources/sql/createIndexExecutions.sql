@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS index_executions_status_next_schedule_time ON executions (status, next_schedule_time)

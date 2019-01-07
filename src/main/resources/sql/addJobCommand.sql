@@ -1,0 +1,1 @@
+INSERT INTO job_commands (job_name, ordering, command) VALUES (?,?,?)

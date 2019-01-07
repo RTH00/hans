@@ -1,0 +1,23 @@
+{
+  "max_parallelism": 1,
+  "scheduler_polling_time": "1000 millis",
+  "new_configuration_polling_time": "2 minutes",
+  "jobs": [
+    {
+      "name": "job1",
+      "start_partition": "2000-01-01 00:00:00",
+      "end_partition": "2000-02-01 00:00:00",
+      "increment": "1 days",
+      "command": [
+        "/bin/true"
+      ],
+      "dependencies": [],
+      "max_parallelism": 100,
+      "on_failure": "retry",
+      "retry_delay": "15 minutes",
+      "retention": "6 months",
+      "stdout_path": "temp_all_job_test_scheduler_logs.txt",
+      "stderr_path": "temp_all_job_test_scheduler_logs.txt"
+    }
+  ]
+}

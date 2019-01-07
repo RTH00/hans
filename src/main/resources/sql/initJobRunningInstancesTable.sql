@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS job_running_instances (
+ job_name TEXT PRIMARY KEY UNIQUE NOT NULL,
+ counter INTEGER NOT NULL
+)

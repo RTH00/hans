@@ -1,0 +1,1 @@
+DELETE FROM executions WHERE job_name = ? AND partition < ?

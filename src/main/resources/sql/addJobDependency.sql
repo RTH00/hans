@@ -1,0 +1,1 @@
+INSERT INTO job_dependencies (job_name, dependency_job_name, shift_partition) VALUES (?,?,?)
