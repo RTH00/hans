@@ -61,7 +61,7 @@ public class Scheduler extends Thread {
             }
             buildIndexes();
 
-            for (int i = 0; i < maxIterations; i++) {
+            for (long i = 0; i < maxIterations; i++) {
                 final Instant startLoop = Instant.now();
 
                 if (importNewJobGraph()) {
@@ -201,11 +201,10 @@ public class Scheduler extends Thread {
                     status = StartedExecution.Status.SUCCESS;
                     nextScheduleTime = null;
                 } else {
-                    final Job job = database.getJob(jobName);
-                    switch (job.getFailureBehavior()) {
+                    switch (execution.getFailureBehavior()) {
                         case RETRY:
                             status = StartedExecution.Status.FAILURE;
-                            nextScheduleTime = job.getRetryDelay().addToInstant(endTime);
+                            nextScheduleTime = execution.getRetryDelay().addToInstant(endTime);
                             break;
                         case MARK_SUCCESS:
                             status = StartedExecution.Status.SUCCESS;
@@ -262,7 +261,7 @@ public class Scheduler extends Thread {
         processBuilder.redirectError(ProcessBuilder.Redirect.appendTo(stderrFile));
         processBuilder.command(applyPartitionTemplating(database.getJobCommands(availableExecution.getJobName()), partition));
         logger.info("Start execution of: " + availableExecution.getJobName() + " " + Utils.toSqliteFormat(partition));
-        runningJobs.add(startExecution(jobName, partition, processBuilder, stderrFile));
+        runningJobs.add(startExecution(job, partition, processBuilder, stderrFile));
         return true;
     }
 
@@ -270,7 +269,7 @@ public class Scheduler extends Thread {
         new File(file.getAbsoluteFile().getParentFile().getAbsolutePath()).mkdirs();
     }
 
-    private static StartedExecution startExecution(final String jobName,
+    private static StartedExecution startExecution(final Job job,
                                                    final Instant partition,
                                                    final ProcessBuilder processBuilder,
                                                    final File stderrFile) throws IOException {
@@ -283,7 +282,7 @@ public class Scheduler extends Thread {
             }
             process = null;
         }
-        return new StartedExecution(jobName, partition, process);
+        return new StartedExecution(job.getName(), partition, process, job.getFailureBehavior(), job.getRetryDelay());
     }
 
 

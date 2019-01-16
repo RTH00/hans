@@ -6,7 +6,7 @@
 
     <groupId>org.rth</groupId>
     <artifactId>hans</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -30,6 +30,8 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
+                    <finalName>${project.artifactId}-${project.version}-all</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <mainClass>org.rth.hans.Hans</mainClass>

@@ -13,14 +13,20 @@ public class StartedExecution {
 
     private final String jobName;
     private final Instant partition;
-    private final Process process;
+    private final Process process; /* nullable */
+    private final Job.FailureBehavior failureBehavior;
+    private final Duration retryDelay;
 
     public StartedExecution(final String jobName,
                             final Instant partition,
-                            final Process process /* nullable */) {
+                            final Process process,
+                            final Job.FailureBehavior failureBehavior,
+                            final Duration retryDelay) {
         this.jobName = jobName;
         this.partition = partition;
         this.process = process;
+        this.failureBehavior = failureBehavior;
+        this.retryDelay = retryDelay;
     }
 
     public boolean isAlive() {
@@ -45,6 +51,14 @@ public class StartedExecution {
 
     public Instant getPartition() {
         return partition;
+    }
+
+    public Job.FailureBehavior getFailureBehavior() {
+        return failureBehavior;
+    }
+
+    public Duration getRetryDelay() {
+        return retryDelay;
     }
 
 }

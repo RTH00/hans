@@ -108,7 +108,7 @@ The second will execute the bash command `sleep 10; false` which always failed (
   * stdout_path: Templating applies to this field (see the `Templating` section).
   * stderr_path: Same as `stdout_path` for the standard error output. Failure to start the job process itself is written in this file.
 
-All fields are mandatory but the `jobs` and `dependencies` lists can be empty.
+All fields are mandatory but the `jobs` and `dependencies` lists can be empty. When a job configuration is changed while a job is running, the failure behavior and retry delay applied are the ones set at the start of the execution.
 
 ## Execution model
 
@@ -122,7 +122,11 @@ In the `command`, `stdout_path` and `stderr_path` fields, the "[[partition]]" is
 
 The test suite is relying on Linux-style paths and commands/binaries, this project should compile on Linux & Mac but won't on other systems.
 
-Simply git clone the project and execute `mvn clean package` in the root directory of the project. The jar with dependencies should be available at `target/hans-[VERSION]-jar-with-dependencies.jar`.
+Simply git clone the project and execute `mvn clean package` in the root directory of the project.
+
+Two jars are generated:
+* `target/hans-[VERSION].jar` contains only H.A.N.S. compiled classes.
+* `target/hans-[VERSION]-all.jar` contains H.A.N.S. compiled classes and all the dependencies. This jar can be executed alone.
 
 ## Starting H.A.N.S.
 
@@ -144,9 +148,9 @@ H.A.N.S. needs a first valid initial configuration. You can use the following on
 After building the jar with dependencies (see section `Building H.A.N.S.`). Two options are available:
 
 * runScheduler: Start the scheduler and start executing jobs.
-`java -jar target/hans-1.0.0-jar-with-dependencies.jar runScheduler [Configuration file path] [Database file path]`
+`java -jar target/hans-[VERSION]-all.jar runScheduler [Configuration file path] [Database file path]`
 * parseConfigurationTest: This option is used to test the parsing of a configuration file.
-`java -jar target/hans-1.0.0-jar-with-dependencies.jar parseConfigurationTest [Configuration file path]`
+`java -jar target/hans-[VERSION]-all.jar parseConfigurationTest [Configuration file path]`
 
 H.A.N.S. has a minimal memory footprint, the following jvm options can be used: `-XX:+UseSerialGC -Xmx100m -Xms100m`.
 
