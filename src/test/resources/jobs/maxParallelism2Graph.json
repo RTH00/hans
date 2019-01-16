@@ -1,5 +1,5 @@
 {
-  "max_parallelism": 3,
+  "max_parallelism": 12,
   "scheduler_polling_time": "1000 millis",
   "new_configuration_polling_time": "2 minutes",
   "jobs": [
@@ -12,7 +12,7 @@
         "/bin/true"
       ],
       "dependencies": [],
-      "max_parallelism": 10,
+      "max_parallelism": 4,
       "on_failure": "retry",
       "retry_delay": "15 years",
       "retention": "6 months",

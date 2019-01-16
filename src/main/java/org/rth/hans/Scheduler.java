@@ -285,9 +285,6 @@ public class Scheduler extends Thread {
         return new StartedExecution(job.getName(), partition, process, job.getFailureBehavior(), job.getRetryDelay());
     }
 
-
-    private static String templateStartPartition = "\\[\\[partition\\]\\]";
-
     static ArrayList<String> applyPartitionTemplating(final ArrayList<String> commands, final Instant partition) {
         final ArrayList<String> newCommands = new ArrayList<>(commands.size());
         for(final String command: commands) {
@@ -297,7 +294,7 @@ public class Scheduler extends Thread {
     }
 
     static String applyPartitionTemplating(final String input, final Instant partition) {
-        return input.replaceAll(templateStartPartition, Utils.toSqliteFormat(partition));
+        return input.replaceAll("\\[\\[partition\\]\\]", Utils.toSqliteFormat(partition));
     }
 
 }

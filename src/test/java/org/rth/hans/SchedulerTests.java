@@ -207,30 +207,35 @@ public class SchedulerTests {
         }
     }
 
+    @Test
     void maxParallelism1Test() throws Exception {
-        maxParallelismTest(3, "jobs/maxParallelism1Graph.json");
+        maxParallelismTest(3L, 1);
     }
 
-    void maxParallelismTest(final long expectedRunning, final String graphPath) throws Exception {
-        try (final TemporaryDatabase db = new TemporaryDatabase("temp_database_max_parallelism_test.db")) {
+    @Test
+    void maxParallelism2Test() throws Exception {
+        maxParallelismTest(4L, 2);
+    }
+
+    void maxParallelismTest(final long expectedRunning, final int nbr) throws Exception {
+        try (final TemporaryDatabase db = new TemporaryDatabase("temp_database_max_parallelism_" + nbr + "_test.db")) {
             Assertions.assertTrue(new Scheduler(
-                    new MockResourceJobParser(graphPath),
+                    new MockResourceJobParser("jobs/maxParallelism" + nbr + "Graph.json"),
                     db
             ).runLoop(1L));
             final Execution[] executions = db.getAllExecutions();
             Assertions.assertEquals(24L,
                     Arrays.stream(executions)
-                            .filter(exe -> "INITIALISED".equals(exe.getStatus()) && "RUNNING".equals(exe.getStatus()))
+                            .filter(exe -> StartedExecution.Status.INITIALISED.equals(exe.getStatus())
+                                    || StartedExecution.Status.RUNNING.equals(exe.getStatus()))
                             .count()
             );
             Assertions.assertEquals(expectedRunning,
                     Arrays.stream(executions)
-                            .filter(exe -> "RUNNING".equals(exe.getStatus()))
+                            .filter(exe -> StartedExecution.Status.RUNNING.equals(exe.getStatus()))
                             .count()
             );
         }
     }
 
-
-    // TODO test max parallelism
 }
