@@ -25,7 +25,7 @@ public class Database implements AutoCloseable {
     private final PreparedStatement resetRunningExecution;
     private final PreparedStatement nextAvailableExecution;
 
-    private final PreparedStatement lastPartitionPerJob;
+    private final PreparedStatement jobStartPartition;
 
     private final PreparedStatement addConfiguration;
     private final PreparedStatement getConfiguration;
@@ -72,7 +72,7 @@ public class Database implements AutoCloseable {
             }
         }).toArray(PreparedStatement[]::new);
 
-        lastPartitionPerJob = connection.prepareStatement(Utils.readResource("sql/lastPartitionPerJob.sql"));
+        jobStartPartition = connection.prepareStatement(Utils.readResource("sql/jobStartPartition.sql"));
         getJob = connection.prepareStatement(Utils.readResource("sql/getJob.sql"));
         incrementJobRunningInstances = connection.prepareStatement(Utils.readResource("sql/incrementJobRunningInstances.sql"));
         decrementJobRunningInstances = connection.prepareStatement(Utils.readResource("sql/decrementJobRunningInstances.sql"));
@@ -137,15 +137,14 @@ public class Database implements AutoCloseable {
     }
 
     /*** partitions ***/
-    public ArrayList<JobPartition> lastPartitionPerJob() throws SQLException {
-        synchronized (lastPartitionPerJob) {
-            try(final ResultSet rs = lastPartitionPerJob.executeQuery()) {
-                final ArrayList<JobPartition> ret = new ArrayList<>();
+    public ArrayList<JobStartPartition> jobStartPartition() throws SQLException {
+        synchronized (jobStartPartition) {
+            try(final ResultSet rs = jobStartPartition.executeQuery()) {
+                final ArrayList<JobStartPartition> ret = new ArrayList<>();
                 while(rs.next()) {
-                    ret.add(new JobPartition(
+                    ret.add(new JobStartPartition(
                             readNullableStringField(rs, 1),
-                            Utils.parseSqliteFormat(readNullableStringField(rs, 2)),
-                            Utils.parseSqliteFormat(readNullableStringField(rs, 3))
+                            Utils.parseSqliteFormat(readNullableStringField(rs, 2))
                     ));
                 }
                 return ret;

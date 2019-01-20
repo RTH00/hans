@@ -2,18 +2,15 @@ package org.rth.hans;
 
 import java.time.Instant;
 
-public class JobPartition {
+public class JobStartPartition {
 
     private final String jobName;
     private final Instant startPartition;
-    private final Instant lastPartition;
 
-    public JobPartition(final String jobName,
-                        final Instant startPartition,
-                        final Instant lastPartition) {
+    public JobStartPartition(final String jobName,
+                        final Instant startPartition) {
         this.jobName = jobName;
         this.startPartition = startPartition;
-        this.lastPartition = lastPartition;
     }
 
     public String getJobName() {
@@ -22,9 +19,5 @@ public class JobPartition {
 
     public Instant getStartPartition() {
         return startPartition;
-    }
-
-    public Instant getLastPartition() {
-        return lastPartition;
     }
 }

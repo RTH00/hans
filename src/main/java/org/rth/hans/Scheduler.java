@@ -98,38 +98,15 @@ public class Scheduler extends Thread {
         return diff;
     }
 
-    private void addWaitingPartition(final PriorityQueue<WaitingPartition> waitingPartitions,
-                                     final String jobName,
-                                     final Instant partition,
-                                     final Instant activationThreshold) throws SQLException {
-        final Instant endPartition = database.getJob(jobName).getEndPartition();
-        if(partition.compareTo(endPartition) < 0) {
-            waitingPartitions.add(new WaitingPartition(
-                    jobName,
-                    partition,
-                    activationThreshold));
-        }
-    }
-
     private PriorityQueue<WaitingPartition> buildNextPartitionIndex() throws SQLException {
         final PriorityQueue<WaitingPartition> waitingPartitions = new PriorityQueue<WaitingPartition>(WaitingPartition.comparator);
-        for(final JobPartition partition: database.lastPartitionPerJob()) {
-            final String jobName = partition.getJobName();
-            final Instant startPartition = partition.getStartPartition();
-            final Instant lastPartition = partition.getLastPartition();
-            final Duration jobIncrement = database.getJob(jobName).getIncrement();
-            if(lastPartition == null || startPartition.compareTo(lastPartition) > 0) {
-                // has never run yet, or the new startPartition > lastPartition
-                addWaitingPartition(waitingPartitions, jobName,
-                        startPartition,
-                        jobIncrement.addToInstant(startPartition)
-                );
-            } else {
-                addWaitingPartition(waitingPartitions, jobName,
-                        jobIncrement.addToInstant(lastPartition),
-                        jobIncrement.addToInstant(lastPartition, 2L)
-                );
-            }
+        for(final JobStartPartition jsp: database.jobStartPartition()) {
+            final String jobName = jsp.getJobName();
+            final Instant startPartition = jsp.getStartPartition();
+            waitingPartitions.add(new WaitingPartition(
+                    jobName,
+                    startPartition,
+                    database.getJob(jobName).getIncrement().addToInstant(startPartition)));
         }
         return waitingPartitions;
     }
@@ -174,10 +151,14 @@ public class Scheduler extends Thread {
                     job.getRetention().minusToInstant(next.getPartition())
             );
             // add next waitingPartition
-            addWaitingPartition(waitingPartitions, next.getJobName(),
-                    next.getActivationThreshold(),
-                    job.getIncrement().addToInstant(next.getActivationThreshold())
-            );
+            final Instant nextStartPartition = next.getActivationThreshold();
+            if(next.getActivationThreshold().compareTo(job.getEndPartition()) < 0) {
+                waitingPartitions.add(new WaitingPartition(
+                        next.getJobName(),
+                        nextStartPartition,
+                        job.getIncrement().addToInstant(next.getActivationThreshold()))
+                );
+            }
             return true;
         } else {
             return false;
@@ -197,24 +178,32 @@ public class Scheduler extends Thread {
                 // update execution log
                 final StartedExecution.Status status;
                 final Instant nextScheduleTime;
+                final boolean forceSuccess;
                 if(execution.isSuccessfull()) {
                     status = StartedExecution.Status.SUCCESS;
                     nextScheduleTime = null;
+                    forceSuccess = false;
                 } else {
                     switch (execution.getFailureBehavior()) {
                         case RETRY:
                             status = StartedExecution.Status.FAILURE;
                             nextScheduleTime = execution.getRetryDelay().addToInstant(endTime);
+                            forceSuccess = false;
                             break;
                         case MARK_SUCCESS:
                             status = StartedExecution.Status.SUCCESS;
                             nextScheduleTime = null;
+                            forceSuccess = true;
                             break;
                         default:
                             throw new Error("Should not reach here");
                     }
                 }
-                logger.info(jobName + " " + Utils.toSqliteFormat(execution.getPartition()) + " finished with status: " + status);
+                logger.info(
+                        jobName + " " + Utils.toSqliteFormat(execution.getPartition()) + " finished with status: " +
+                                (execution.isSuccessfull() ? StartedExecution.Status.SUCCESS.name() : StartedExecution.Status.FAILURE.name())
+                                + (forceSuccess ? " marked as " + StartedExecution.Status.SUCCESS.name() : "")
+                );
                 // update counters
                 database.decrementJobRunningInstances(jobName);
                 database.updateJobEndExecution(jobName,

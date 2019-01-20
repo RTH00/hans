@@ -238,4 +238,40 @@ public class SchedulerTests {
         }
     }
 
+    @Test
+    void previousStartPartitionTest() throws Exception {
+
+        try (final TemporaryDatabase db = new TemporaryDatabase("temp_database_previous_start_partition_test.db")) {
+            Assertions.assertTrue(new Scheduler(
+                    new MockResourceJobParser("jobs/previousStartPartition1Graph.json"),
+                    db
+            ).runLoop(1L));
+            Assertions.assertEquals(1, db.getAllExecutions().length);
+            Assertions.assertTrue(new Scheduler(
+                    new MockResourceJobParser("jobs/previousStartPartition2Graph.json"),
+                    db
+            ).runLoop(1L));
+            Assertions.assertEquals(48, db.getAllExecutions().length);
+        }
+
+    }
+
+    @Test
+    void shiftLaterStartPartitionTest() throws Exception {
+
+        try (final TemporaryDatabase db = new TemporaryDatabase("temp_database_shift_later_start_partition_test.db")) {
+            Assertions.assertTrue(new Scheduler(
+                    new MockResourceJobParser("jobs/shiftLaterStartPartition1Graph.json"),
+                    db
+            ).runLoop(1L));
+            Assertions.assertEquals(24, db.getAllExecutions().length);
+            Assertions.assertTrue(new Scheduler(
+                    new MockResourceJobParser("jobs/shiftLaterStartPartition2Graph.json"),
+                    db
+            ).runLoop(1L));
+            Assertions.assertEquals(48, db.getAllExecutions().length);
+        }
+
+    }
+
 }

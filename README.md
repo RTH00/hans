@@ -96,7 +96,7 @@ The second will execute the bash command `sleep 10; false` which always failed (
 * jobs: List of the jobs executed by the scheduler.
   * start_partition: first partition date all partition dates should have the following format: "yyyy-MM-dd HH:mm:ss".
   * end_partition: date of the last partition (excluded), to run this task continuously set a date in a distant future.
-  * increment: Duration used to generate new partitions from the starting date.
+  * increment: Duration used to generate new partitions from the starting date. It is recommended to update the `start_partition` value when the `increment` value of a running job is changed, the new `increment` value will be applied strictly from the `start_partition` value and not from the current partition.
   * command: Array of Strings used to start the task. Templating applies to this field (see the `Templating` section).
   * dependencies: list of the jobs which the job depends on. The job can depend on itself (take care to avoid deadlocks).
     * name: Name of the job on which the current job depends.
@@ -120,7 +120,7 @@ In the `command`, `stdout_path` and `stderr_path` fields, the "[[partition]]" is
 
 ## Building H.A.N.S.
 
-The test suite is relying on Linux-style paths and commands/binaries, this project should compile on Linux & Mac but won't on other systems.
+The test suite is relying on Linux specific paths and commands/binaries, this project should compile on a standard Linux but won't on other systems.
 
 Simply git clone the project and execute `mvn clean package` in the root directory of the project.
 
