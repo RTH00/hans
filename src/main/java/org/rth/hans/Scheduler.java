@@ -103,10 +103,13 @@ public class Scheduler extends Thread {
         for(final JobStartPartition jsp: database.jobStartPartition()) {
             final String jobName = jsp.getJobName();
             final Instant startPartition = jsp.getStartPartition();
-            waitingPartitions.add(new WaitingPartition(
-                    jobName,
-                    startPartition,
-                    database.getJob(jobName).getIncrement().addToInstant(startPartition)));
+            final Job job = database.getJob(jobName);
+            if(startPartition.compareTo(job.getEndPartition()) < 0) {
+                waitingPartitions.add(new WaitingPartition(
+                        jobName,
+                        startPartition,
+                        job.getIncrement().addToInstant(startPartition)));
+            }
         }
         return waitingPartitions;
     }

@@ -274,4 +274,16 @@ public class SchedulerTests {
 
     }
 
+    @Test
+    void sameEndPartitionTest() throws Exception {
+        try (final TemporaryDatabase db = new TemporaryDatabase("temp_database_same_end_partition_test.db")) {
+            Assertions.assertTrue(new Scheduler(
+                    new MockResourceJobParser("jobs/sameEndPartitionGraph.json"),
+                    db
+            ).runLoop(3L));
+            final Execution[] executions = db.getAllExecutions();
+            Assertions.assertEquals(0, executions.length);
+        }
+    }
+
 }
