@@ -16,8 +16,8 @@
       "on_failure": "retry",
       "retry_delay": "1000 years",
       "retention": "6 months",
-      "stdout_path": "temp_all_job_test_scheduler_logs.txt",
-      "stderr_path": "temp_all_job_test_scheduler_logs.txt"
+      "stdout_path": "/dev/null",
+      "stderr_path": "/dev/null"
     }
   ]
 }

@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS jobs (
  retry_delay TEXT NOT NULL,
  retention TEXT NOT NULL,
  stdout_path TEXT NOT NULL,
- stderr_path TEXT NOT NULL
+ stderr_path TEXT NOT NULL,
+ is_activated BOOLEAN NOT NULL
 )

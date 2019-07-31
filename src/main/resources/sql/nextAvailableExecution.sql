@@ -14,7 +14,8 @@ FROM (
     FROM executions
     INNER JOIN jobs ON jobs.job_name = executions.job_name
     LEFT JOIN job_running_instances ON jobs.job_name = job_running_instances.job_name
-    WHERE jobs.max_parallelism > coalesce(job_running_instances.counter, 0)
+    WHERE jobs.is_activated
+    AND jobs.max_parallelism > coalesce(job_running_instances.counter, 0)
     AND (executions.status = "INITIALISED" OR status = "FAILURE")
     AND executions.next_schedule_time <= ?
   ) AS src

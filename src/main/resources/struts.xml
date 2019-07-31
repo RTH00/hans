@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+		"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+		"http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+
+	<constant name="struts.devMode" value="true" />
+    <constant name="struts.ui.theme" value="bootstrap" />
+
+	<package name="basicstruts2" extends="struts-default">
+
+		<!-- TODO add interceptors to check perfs -->
+
+		<action name="header" class="org.rth.hans.ui.Header" method="execute">
+			<result name="success">/header.jsp</result>
+		</action>
+
+		<action name="footer" class="org.rth.hans.ui.Footer" method="execute">
+			<result name="success">/footer.jsp</result>
+		</action>
+
+		<action name="login" class="org.rth.hans.ui.Login" method="execute">
+			<result name="success">/index.jsp</result>
+			<result name="unauthorized">/login.jsp</result>
+		</action>
+
+        <action name="navigation" class="org.rth.hans.ui.Navigation" method="execute">
+            <result name="success">/navigation.jsp</result>
+        </action>
+
+		<!-- default page -->
+        <action name="" class="org.rth.hans.ui.Index" method="execute">
+			<result name="success">/index.jsp</result>
+			<result name="unauthorized">/login.jsp</result>
+        </action>
+		<action name="index" class="org.rth.hans.ui.Index" method="execute">
+			<result name="success">/index.jsp</result>
+			<result name="unauthorized">/login.jsp</result>
+		</action>
+
+		<action name="jobs" class="org.rth.hans.ui.Jobs" method="execute">
+			<result name="success">/jobs.jsp</result>
+		</action>
+
+		<action name="activateJob" class="org.rth.hans.ui.UpdateJob" method="activate">
+			<result name="success" type="chain">jobs</result>
+			<result name="error">/jobs.jsp</result>
+		</action>
+		<action name="desactivateJob" class="org.rth.hans.ui.UpdateJob" method="desactivate">
+			<result name="success" type="chain">jobs</result>
+			<result name="error">/jobs.jsp</result>
+		</action>
+
+	</package>
+
+</struts>

@@ -1,0 +1,1 @@
+UPDATE jobs SET is_activated = ? WHERE job_name = ?

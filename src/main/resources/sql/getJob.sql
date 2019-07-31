@@ -7,6 +7,7 @@ SELECT job_name,
        retry_delay,
        retention,
        stdout_path,
-       stderr_path
+       stderr_path,
+       is_activated
 FROM jobs
 WHERE job_name = ?

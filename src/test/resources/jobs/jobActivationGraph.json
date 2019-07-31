@@ -1,0 +1,40 @@
+{
+  "max_parallelism": 5,
+  "scheduler_polling_time": "1000 millis",
+  "new_configuration_polling_time": "2 minutes",
+  "jobs": [
+    {
+      "name": "job1",
+      "start_partition": "2005-01-01 00:00:00",
+      "end_partition": "2005-01-02 00:00:00",
+      "increment": "1 hours",
+      "command": [
+        "/bin/echo", "toto"
+      ],
+      "dependencies": [],
+      "max_parallelism": 10,
+      "on_failure": "retry",
+      "retry_delay": "15 years",
+      "retention": "6 months",
+      "stdout_path": "/dev/null",
+      "stderr_path": "/dev/null"
+    },
+    {
+      "name": "job2",
+      "start_partition": "2005-01-01 00:00:00",
+      "end_partition": "2005-01-02 00:00:00",
+      "increment": "1 hours",
+      "command": [
+        "/bin/echo", "toto"
+      ],
+      "dependencies": [],
+      "max_parallelism": 10,
+      "on_failure": "retry",
+      "retry_delay": "15 years",
+      "retention": "6 months",
+      "stdout_path": "/dev/null",
+      "stderr_path": "/dev/null"
+    }
+
+  ]
+}

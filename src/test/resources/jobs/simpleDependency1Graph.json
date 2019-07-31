@@ -16,8 +16,8 @@
       "on_failure": "retry",
       "retry_delay": "15 minutes",
       "retention": "30 days",
-      "stdout_path": "temp_all_job_test_scheduler_logs.txt",
-      "stderr_path": "temp_all_job_test_scheduler_logs.txt"
+      "stdout_path": "/dev/null",
+      "stderr_path": "/dev/null"
     },
     {
       "name": "job2",
@@ -41,8 +41,8 @@
       "on_failure": "mark_success",
       "retry_delay": "0 seconds",
       "retention": "100 days",
-      "stdout_path": "temp_all_job_test_scheduler_logs.txt",
-      "stderr_path": "temp_all_job_test_scheduler_logs.txt"
+      "stdout_path": "/dev/null",
+      "stderr_path": "/dev/null"
     }
   ]
 }
