@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS users (
+ user_name TEXT PRIMARY KEY UNIQUE NOT NULL,
+ hashed_password TEXT NOT NULL,
+ salt TEXT NOT NULL,
+ creation_date DATE NOT NULL,
+ role TEXT NOT NULL
+)

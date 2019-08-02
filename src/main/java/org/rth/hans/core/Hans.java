@@ -26,26 +26,23 @@ public class Hans implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        logger.info("Starting Hans...");
-        final String databasePath = checkEnv("HANS_DATABASE_PATH");
-        final String configurationPath = checkEnv("HANS_CONFIGURATION_PATH");
-
-        logger.info("database path: " + databasePath);
-        logger.info("configuration path: " + configurationPath);
         try {
+            logger.info("Starting Hans...");
+            final String databasePath = checkEnv("HANS_DATABASE_PATH");
+            final String configurationPath = checkEnv("HANS_CONFIGURATION_PATH");
+
+            logger.info("database path: " + databasePath);
+            logger.info("configuration path: " + configurationPath);
             database = new Database(databasePath);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
 
-        try {
             final Thread thread = new Thread(new SchedulerRunner(configurationPath));
             thread.setName("Scheduler");
             thread.start();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+            logger.error("exiting...");
+            System.exit(1);
         }
-
     }
 
     @Override

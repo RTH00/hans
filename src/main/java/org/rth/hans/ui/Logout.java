@@ -16,9 +16,7 @@ public class Logout implements SessionAware {
     }
 
     public String execute() throws Exception {
-
         session.clear();
-
         return SUCCESS;
     }
 

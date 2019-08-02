@@ -2,6 +2,7 @@ package org.rth.hans.core;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.rth.hans.ui.User;
 
 import java.io.IOException;
 import java.sql.*;
@@ -45,6 +46,10 @@ public class Database implements AutoCloseable {
     private final PreparedStatement resetJobRunningInstances;
     private final PreparedStatement getJobCommands;
 
+    /*** users ***/
+    private final PreparedStatement getUserIdentification;
+    private final PreparedStatement addUser;
+
     public Database(final String databasePath) throws SQLException, IOException {
         this.connection = connect(databasePath);
         init(connection);
@@ -85,6 +90,9 @@ public class Database implements AutoCloseable {
         decrementJobRunningInstances = connection.prepareStatement(Utils.readResource("sql/decrementJobRunningInstances.sql"));
         resetJobRunningInstances = connection.prepareStatement(Utils.readResource("sql/resetJobRunningInstances.sql"));
         getJobCommands = connection.prepareStatement(Utils.readResource("sql/getJobCommands.sql"));
+        /*** users ***/
+        getUserIdentification = connection.prepareStatement(Utils.readResource("sql/users/getUserIdentification.sql"));
+        addUser = connection.prepareStatement(Utils.readResource("sql/users/addUser.sql"));
     }
 
     @Override
@@ -105,13 +113,18 @@ public class Database implements AutoCloseable {
     }
 
     private static void init(final Connection connection) throws SQLException, IOException {
-        connection.createStatement().executeUpdate(Utils.readResource("sql/initExecutionTable.sql"));
-        connection.createStatement().executeUpdate(Utils.readResource("sql/initJobsTable.sql"));
-        connection.createStatement().executeUpdate(Utils.readResource("sql/initJobDependenciesTable.sql"));
-        connection.createStatement().executeUpdate(Utils.readResource("sql/initJobCommandsTable.sql"));
-        connection.createStatement().executeUpdate(Utils.readResource("sql/initJobRunningInstancesTable.sql"));
-        connection.createStatement().executeUpdate(Utils.readResource("sql/initConfigurationTable.sql"));
-        connection.createStatement().executeUpdate(Utils.readResource("sql/createIndexExecutions.sql"));
+        for(final String path : new String[]{
+                "sql/initExecutionTable.sql",
+                "sql/initJobsTable.sql",
+                "sql/initJobDependenciesTable.sql",
+                "sql/initJobCommandsTable.sql",
+                "sql/initJobRunningInstancesTable.sql",
+                "sql/initConfigurationTable.sql",
+                "sql/createIndexExecutions.sql",
+                "sql/users/initUsersTable.sql"
+        }) {
+            connection.createStatement().executeUpdate(Utils.readResource(path));
+        }
     }
 
     /*** utils ***/
@@ -304,7 +317,6 @@ public class Database implements AutoCloseable {
         }
     }
 
-    // TODO add tests
     public boolean updateJobIsActivated(final String jobName, final boolean newValue) throws SQLException {
         synchronized (updateJobIsActivated) {
             updateJobIsActivated.setBoolean(1, newValue);
@@ -447,6 +459,37 @@ public class Database implements AutoCloseable {
                 }
                 return ret;
             }
+        }
+    }
+
+    public User.Identification getUserIdentification(final String userName) throws SQLException {
+        synchronized (getUserIdentification) {
+            getUserIdentification.setString(1, userName);
+            try (final ResultSet rs = getUserIdentification.executeQuery()) {
+                if (rs.next()) {
+                    return new User.Identification(
+                            rs.getString(1),
+                            rs.getString(2)
+                    );
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public boolean addUser(final String userName,
+                           final String hashedPassword,
+                           final String salt,
+                           final Instant creationDate,
+                           final String role) throws SQLException {
+        synchronized (addUser) {
+            addUser.setString(1, userName);
+            addUser.setString(2, hashedPassword);
+            addUser.setString(3, salt);
+            addUser.setString(4, Utils.toSqliteFormat(creationDate));
+            addUser.setString(5, role);
+            return addUser.executeUpdate() == 1;
         }
     }
 
