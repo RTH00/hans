@@ -8,16 +8,9 @@ import java.util.Map;
 import static com.opensymphony.xwork2.Action.ERROR;
 import static com.opensymphony.xwork2.Action.SUCCESS;
 
-public class UpdateJob implements SessionAware {
-
-    private Map<String, Object> session;
+public class UpdateJob {
 
     private String jobName;
-
-    @Override
-    public void setSession(Map<String, Object> session) {
-        this.session = session;
-    }
 
     public String updateIsActivated(final boolean newValue) throws Exception {
         if(jobName == null) {

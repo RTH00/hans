@@ -2,9 +2,6 @@ package org.rth.hans.ui;
 
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.Interceptor;
-import org.apache.struts2.interceptor.SessionAware;
-
-import java.util.Map;
 
 public class AuthentificationInterceptor implements Interceptor {
 

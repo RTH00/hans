@@ -11,7 +11,9 @@
 <div class="row justify-content-center">
   <div class="col-md-4 mt-5">
     <div class="text-center mb-4">
-      <img class="mb-4" src="/image/hans-logo.png" height="72">
+      <a href="/index">
+        <img class="mb-4" src="/image/hans-logo.png" height="72">
+      </a>
       <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
       <p>Enter your username and password to sign in</p>
     </div>

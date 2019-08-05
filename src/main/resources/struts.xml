@@ -12,60 +12,82 @@
 
 		<interceptors>
 			<interceptor name="authentificationInterceptor" class="org.rth.hans.ui.AuthentificationInterceptor"/>
+			<interceptor name="TimerInterceptor" class="org.rth.hans.ui.TimerInterceptor"/>
 			<interceptor-stack name="authentification">
 				<interceptor-ref name="defaultStack"/>
 				<interceptor-ref name="authentificationInterceptor"/>
+			</interceptor-stack>
+			<interceptor-stack name="timer">
+				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="TimerInterceptor"/>
 			</interceptor-stack>
 		</interceptors>
 		<!-- TODO add interceptors to check perfs -->
 
 		<action name="header" class="org.rth.hans.ui.Header" method="execute">
+			<interceptor-ref name="timer"/>
 			<result name="success">/header.jsp</result>
 		</action>
 
 		<action name="footer" class="org.rth.hans.ui.Footer" method="execute">
+			<interceptor-ref name="timer"/>
 			<result name="success">/footer.jsp</result>
 		</action>
 
 		<action name="login" class="org.rth.hans.ui.Login" method="execute">
+			<interceptor-ref name="timer"/>
 			<result name="success">/index.jsp</result>
 			<result name="error">/login.jsp</result>
 			<result name="unauthorized">/login.jsp</result>
 		</action>
 
 		<action name="logout" class="org.rth.hans.ui.Logout" method="execute">
+			<interceptor-ref name="timer"/>
 			<result name="success">/login.jsp</result>
 		</action>
 
         <action name="navigation" class="org.rth.hans.ui.Navigation" method="execute">
+			<interceptor-ref name="timer"/>
             <result name="success">/navigation.jsp</result>
         </action>
 
 		<!-- default page -->
         <action name="" class="org.rth.hans.ui.Index" method="execute">
+			<interceptor-ref name="timer"/>
 			<interceptor-ref name="authentification"/>
 			<result name="success">/index.jsp</result>
 			<result name="unauthorized">/login.jsp</result>
         </action>
 		<action name="index" class="org.rth.hans.ui.Index" method="execute">
+			<interceptor-ref name="timer"/>
 			<interceptor-ref name="authentification"/>
 			<result name="success">/index.jsp</result>
 			<result name="unauthorized">/login.jsp</result>
 		</action>
 
 		<action name="jobs" class="org.rth.hans.ui.Jobs" method="execute">
+			<interceptor-ref name="timer"/>
 			<interceptor-ref name="authentification"/>
 			<result name="success">/jobs.jsp</result>
 			<result name="unauthorized">/login.jsp</result>
 		</action>
 
+		<action name="performance" class="org.rth.hans.ui.Performance" method="execute">
+			<interceptor-ref name="timer"/>
+			<interceptor-ref name="authentification"/>
+			<result name="success">/performance.jsp</result>
+			<result name="unauthorized">/login.jsp</result>
+		</action>
+
 		<action name="activateJob" class="org.rth.hans.ui.UpdateJob" method="activate">
+			<interceptor-ref name="timer"/>
 			<interceptor-ref name="authentification"/>
 			<result name="success" type="chain">jobs</result>
 			<result name="error">/jobs.jsp</result>
 			<result name="unauthorized">/login.jsp</result>
 		</action>
 		<action name="desactivateJob" class="org.rth.hans.ui.UpdateJob" method="desactivate">
+			<interceptor-ref name="timer"/>
 			<interceptor-ref name="authentification"/>
 			<result name="success" type="chain">jobs</result>
 			<result name="error">/jobs.jsp</result>

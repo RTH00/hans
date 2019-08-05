@@ -13,6 +13,10 @@
         <a class="nav-link" href="/jobs">Jobs<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
+        <s:url var="performance" action="performance"/>
+        <a class="nav-link" href="${performance}">Performance</a>
+      </li>
+      <li class="nav-item">
         <s:url var="logout" action="logout"/>
         <a class="nav-link" href="${logout}">Logout</a>
       </li>
