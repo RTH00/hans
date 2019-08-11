@@ -412,6 +412,7 @@ public class Database implements AutoCloseable {
         }
     }
 
+    // returns null commands & dependencies
     public static Job parseJob(final ResultSet rs) throws SQLException {
         return new Job(
                 rs.getString(1),

@@ -73,4 +73,9 @@ public class Duration {
         return addToInstant(instant, -1L);
     }
 
+    @Override
+    public String toString() {
+        return Long.toString(value) + " " + unit.name();
+    }
+
 }

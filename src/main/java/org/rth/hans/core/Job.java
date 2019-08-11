@@ -21,7 +21,7 @@ public class Job {
     private final long maxParallelism;
     private final FailureBehavior failureBehavior;
     private final Duration retryDelay;
-    private final Duration retention; // in seconds
+    private final Duration retention;
     private final String stdoutPath;
     private final String stderrPath;
     private final boolean isActivated;
