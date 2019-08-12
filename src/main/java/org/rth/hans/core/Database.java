@@ -33,10 +33,9 @@ public class Database implements AutoCloseable {
     private final PreparedStatement addConfiguration;
     private final PreparedStatement getConfiguration;
 
-    /*** job & dependencies ***/
+    /*** job ***/
     private final PreparedStatement addJob;
     private final PreparedStatement updateJobIsActivated;
-    private final PreparedStatement addJobDependency;
     private final PreparedStatement addJobCommand;
     private final PreparedStatement[] cleanJobTables;
     private final PreparedStatement getJob;
@@ -45,6 +44,10 @@ public class Database implements AutoCloseable {
     private final PreparedStatement decrementJobRunningInstances;
     private final PreparedStatement resetJobRunningInstances;
     private final PreparedStatement getJobCommands;
+
+    /*** job_dependencies ***/
+    private final PreparedStatement addJobDependency;
+    private final PreparedStatement getJobDependencies;
 
     /*** users ***/
     private final PreparedStatement getUserIdentification;
@@ -68,7 +71,6 @@ public class Database implements AutoCloseable {
         /*** jobs ***/
         addJob = connection.prepareStatement(Utils.readResource("sql/addJob.sql"));
         updateJobIsActivated = connection.prepareStatement(Utils.readResource("sql/updateJobIsActivated.sql"));
-        addJobDependency = connection.prepareStatement(Utils.readResource("sql/addJobDependency.sql"));
         addJobCommand = connection.prepareStatement(Utils.readResource("sql/addJobCommand.sql"));
         cleanJobTables = Arrays.stream(new String[]{
                 "DELETE FROM jobs;",
@@ -93,6 +95,10 @@ public class Database implements AutoCloseable {
         /*** users ***/
         getUserIdentification = connection.prepareStatement(Utils.readResource("sql/users/getUserIdentification.sql"));
         addUser = connection.prepareStatement(Utils.readResource("sql/users/addUser.sql"));
+        /*** job_dependencies ***/
+        addJobDependency = connection.prepareStatement(Utils.readResource("sql/job_dependencies/addJobDependency.sql"));
+        getJobDependencies = connection.prepareStatement(Utils.readResource("sql/job_dependencies/getJobDependencies.sql"));
+
     }
 
     @Override
@@ -116,7 +122,7 @@ public class Database implements AutoCloseable {
         for(final String path : new String[]{
                 "sql/initExecutionTable.sql",
                 "sql/initJobsTable.sql",
-                "sql/initJobDependenciesTable.sql",
+                "sql/job_dependencies/initJobDependenciesTable.sql",
                 "sql/initJobCommandsTable.sql",
                 "sql/initJobRunningInstancesTable.sql",
                 "sql/initConfigurationTable.sql",
@@ -347,6 +353,22 @@ public class Database implements AutoCloseable {
         }
     }
 
+    public ArrayList<Dependency> getJobDependencies(final String jobName) throws SQLException {
+        final ArrayList<Dependency> dependencies = new ArrayList<>();
+        synchronized (getJobDependencies){
+            getJobDependencies.setString(1,jobName);
+            try(final ResultSet rs = getJobDependencies.executeQuery()) {
+                while(rs.next()) {
+                    dependencies.add(new Dependency(
+                            rs.getString(1),
+                            Duration.parseDuration(rs.getString(2))
+                    ));
+                }
+            }
+        }
+        return dependencies;
+    }
+
     // push new job configuration 'atomically'
     public void pushConfiguration(final JobConfiguration jobConfiguration) throws SQLException {
         // push first in import tables
@@ -388,6 +410,9 @@ public class Database implements AutoCloseable {
 
     // doesn't return commands/dependencies
     public Job getJob(final String jobName) throws SQLException {
+        if(jobName == null) {
+            return null;
+        }
         synchronized (getJob) {
             getJob.setString(1, jobName);
             try(final ResultSet rs = getJob.executeQuery()) {

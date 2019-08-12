@@ -3,6 +3,7 @@ package org.rth.hans.ui;
 import org.apache.struts2.interceptor.SessionAware;
 import org.rth.hans.core.*;
 
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,11 +15,14 @@ public class Jobs implements SessionAware {
 
     private Map<String, Object> session;
 
-    private ArrayList<Job> jobs;
+    // inputs
+    private String jobName;
 
-    private String jobName; // TODO print more info -> commands, dependencies
-    // without commands/dependencies
-    private Job selectedJob;
+    // outputs
+    private ArrayList<Job> jobs;
+    private Job selectedJob; // without commands/dependencies
+    private ArrayList<Dependency> dependencies;
+    private ArrayList<String> commands;
 
     private ArrayList<ExecutionInfo> executionInfos;
 
@@ -92,9 +96,9 @@ public class Jobs implements SessionAware {
 
         jobs = Hans.database.getAllJobs();
         jobs.sort(Job.jobNameCaseInsensitiveComparator);
+        selectedJob = Hans.database.getJob(jobName);
 
-        if(jobName != null) {
-            selectedJob = Hans.database.getJob(jobName);
+        if(selectedJob != null) {
             // TODO update start instant
             final Instant now = Instant.now();
             executionInfos = Utils.map(
@@ -102,11 +106,22 @@ public class Jobs implements SessionAware {
                     exe -> new ExecutionInfo(exe, now)
             );
             executionInfos.sort(ExecutionInfo.descPartitionComparator);
+            fetchDependencies(jobName);
+            fetchCommands(jobName);
         }
 
         return SUCCESS;
 
     }
+
+    public void fetchDependencies(final String jobName) throws SQLException {
+        dependencies = Hans.database.getJobDependencies(jobName);
+    }
+
+    public void fetchCommands(final String jobName) throws SQLException {
+        commands = Hans.database.getJobCommands(jobName);
+    }
+
 
     public ArrayList<Job> getJobs() {
         return jobs;
@@ -123,4 +138,13 @@ public class Jobs implements SessionAware {
     public ArrayList<ExecutionInfo> getExecutionInfos() {
         return executionInfos;
     }
+
+    public ArrayList<Dependency> getDependencies() {
+        return dependencies;
+    }
+
+    public ArrayList<String> getCommands() {
+        return commands;
+    }
+
 }

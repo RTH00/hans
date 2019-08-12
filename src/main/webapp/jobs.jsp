@@ -23,7 +23,28 @@
   <s:if test="selectedJob != null">
     <!-- selected job -->
 
-    <table class="table table-bordered">
+    <div class="row mt-2 ml-1">
+      <!-- display on/off buttons -->
+      <s:if test="selectedJob.isActivated">
+        <form class="btn-group" action="desactivateJob">
+          <s:hidden name="jobName" value="%{selectedJob.name}"/>
+          <input type="submit" class="btn btn-success active" value="Started" />
+          <input type="submit" class="btn btn-light text-danger" value="Stop" />
+        </form>
+      </s:if>
+      <s:else>
+        <form class="btn-group" action="activateJob">
+          <s:hidden name="jobName" value="%{selectedJob.name}"/>
+          <input type="submit" class="btn nbt-light text-success" value="Start" />
+          <input type="submit" class="btn btn-danger active" value="Stopped" />
+        </form>
+      </s:else>
+    </div>
+
+    <button class="mt-3 btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapsible-job-property-list">
+      Show/Hide job properties
+    </button>
+    <table class="mt-3 table table-bordered collapse" id="collapsible-job-property-list">
       <thead>
         <tr>
           <th scope="col">Property</th>
@@ -46,6 +67,44 @@
         <tr>
           <th scope="row">Increment</th>
           <td><s:property value="selectedJob.increment"/></td>
+        </tr>
+        <tr>
+          <th scope="row">Dependency</th>
+          <td>
+            <s:if test="dependencies.size() == 0">
+              None
+            </s:if>
+            <s:else>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Job name</th>
+                    <th scope="col">Shift</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <s:iterator value="dependencies">
+                    <tr>
+                      <td><s:property value="jobName" /></td>
+                      <td><s:property value="shift" /></td>
+                    </tr>
+                  </s:iterator>
+                </tbody>
+              </table>
+            </s:else>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Command</th>
+          <td>
+            <table class="table table-bordered">
+              <tbody>
+                <s:iterator value="commands">
+                  <tr><td><s:property/></tr></td>
+                </s:iterator>
+              </tbody>
+            </table>
+          </td>
         </tr>
         <tr>
           <th scope="row">Max parallelism</th>
@@ -71,32 +130,13 @@
           <th scope="row">Stderr path</th>
           <td><s:property value="selectedJob.stderrPath"/></td>
         </tr>
-        <tr>
-          <th scope="row">Status</th>
-          <td>
-            <!-- display on/off buttons -->
-            <s:if test="selectedJob.isActivated">
-              <form class="btn-group" action="desactivateJob">
-                <s:hidden name="jobName" value="%{selectedJob.name}"/>
-                <input type="submit" class="btn btn-success active" value="On" />
-                <input type="submit" class="btn btn-light text-danger" value="Off" />
-              </form>
-            </s:if>
-            <s:else>
-              <form class="btn-group" action="activateJob">
-                <s:hidden name="jobName" value="%{selectedJob.name}"/>
-                <input type="submit" class="btn nbt-light text-success" value="On" />
-                <input type="submit" class="btn btn-danger active" value="Off" />
-              </form>
-            </s:else>
-          </td>
-        </tr>
       </tbody>
     </table>
 
-    <h4>Executions:</h4>
-
-    <table class="table table-striped">
+    <button class="mt-3 btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapsible-job-execution-list">
+      Show/Hide job executions
+    </button>
+    <table class="mt-3 table table-striped collapse show" id="collapsible-job-execution-list">
       <thead>
         <tr>
           <th scope="col">Partition</th>
@@ -104,6 +144,9 @@
           <th scope="col">Start</th>
           <th scope="col">End</th>
           <th scope="col">Running time</th>
+          <th scope="col">Rerun</th>
+          <th scope="col">Force success</th>
+          <th scope="col">Force failure</th>
         </tr>
       </thead>
       <tbody>
@@ -130,6 +173,9 @@
                 <s:property value="runningTime" />s
               </s:if>
             </td>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td>TODO</td>
           </tr>
         </s:iterator>
       </tbody>

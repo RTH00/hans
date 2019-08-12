@@ -4,11 +4,7 @@
 
 <s:action name="header" executeResult="true" />
 
-<div class="row">
-  <br><br><br>
-</div>
-
-<div class="row justify-content-center">
+<div class="mt-5 row justify-content-center">
   <div class="col-md-4 mt-5">
     <div class="text-center mb-4">
       <a href="/index">

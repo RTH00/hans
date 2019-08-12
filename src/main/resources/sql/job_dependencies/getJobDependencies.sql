@@ -1,0 +1,1 @@
+SELECT dependency_job_name, shift_partition FROM job_dependencies WHERE job_name = ?

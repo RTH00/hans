@@ -18,4 +18,5 @@ public class Dependency {
     public Duration getShift() {
         return shift;
     }
+
 }
