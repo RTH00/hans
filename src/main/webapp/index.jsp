@@ -3,15 +3,16 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
 <s:action name="header" executeResult="true" />
-<s:action name="navigation" executeResult="true" />
+<s:action name="navigation" executeResult="true" ignoreContextParams="true">
+    <s:param name="page" value='"dashboard"'/>
+</s:action>
 
-    <div class="container-fluid">
+<div class="container-fluid">
 
-dashboard here<br>
-insert list of last failing executions<br>
+  dashboard here<br>
+  insert list of last failing executions<br>
 
-    </div>
-  </div>
+</div>
 
 
 <s:action name="footer" executeResult="true" />

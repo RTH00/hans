@@ -3,7 +3,9 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
 <s:action name="header" executeResult="true" />
-<s:action name="navigation" executeResult="true" />
+<s:action name="navigation" executeResult="true" ignoreContextParams="true">
+    <s:param name="page" value='"jobs"'/>
+</s:action>
 
 <div class="d-flex" id="wrapper">
   <!-- Sidebar -->

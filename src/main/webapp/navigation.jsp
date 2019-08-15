@@ -6,13 +6,13 @@
   <a class="navbar-brand" href="/index"><img src="image/hans-logo.png" alt="Hans" width=180 height=45 /></a>
 
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
+      <li class="nav-item ${dashboardActive}">
         <a class="nav-link" href="/index">Dashboard<span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item ${jobsActive}">
         <a class="nav-link" href="/jobs">Jobs<span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item ${performanceActive}">
         <s:url var="performance" action="performance"/>
         <a class="nav-link" href="${performance}">Performance</a>
       </li>
