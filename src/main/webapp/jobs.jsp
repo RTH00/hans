@@ -138,50 +138,73 @@
     <button class="mt-3 btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapsible-job-execution-list">
       Show/Hide job executions
     </button>
-    <table class="mt-3 table table-striped collapse show" id="collapsible-job-execution-list">
-      <thead>
-        <tr>
-          <th scope="col">Partition</th>
-          <th scope="col">Status</th>
-          <th scope="col">Start</th>
-          <th scope="col">End</th>
-          <th scope="col">Running time</th>
-          <th scope="col">Rerun</th>
-          <th scope="col">Force success</th>
-          <th scope="col">Force failure</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- list of executions -->
-        <s:iterator value="executionInfos">
+    <div class="mt-3 collapse show" id="collapsible-job-execution-list" >
+      <table class="table table-striped" >
+        <thead>
           <tr>
-            <td scope="row"><s:property value="partition" /></th>
-            <s:if test='"SUCCESS".equals(status)'>
-              <td class="text-success"><s:property value="status" /></td>
-            </s:if>
-            <s:elseif test='"FAILURE".equals(status)'>
-              <td class="text-danger"><s:property value="status" /></td>
-            </s:elseif>
-            <s:elseif test='"RUNNING".equals(status)'>
-              <td class="text-warning"><s:property value="status" /></td>
-            </s:elseif>
-       	    <s:else>
-              <td><s:property value="status" /></td>
-            </s:else>
-            <td><s:property value="startTime" /></td>
-            <td><s:property value="endTime" /></td>
-            <td>
-              <s:if test='runningTime != null'>
-                <s:property value="runningTime" />s
-              </s:if>
-            </td>
-            <td>TODO</td>
-            <td>TODO</td>
-            <td>TODO</td>
+            <th scope="col">Partition</th>
+            <th scope="col">Status</th>
+            <th scope="col">Start</th>
+            <th scope="col">End</th>
+            <th scope="col">Running time</th>
+            <th scope="col">Rerun</th>
+            <th scope="col">Force success</th>
+            <th scope="col">Force failure</th>
           </tr>
-        </s:iterator>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <!-- list of executions -->
+          <s:iterator value="executionInfos">
+            <tr>
+              <td scope="row"><s:property value="partition" /></th>
+              <s:if test='"SUCCESS".equals(status)'>
+                <td class="text-success"><s:property value="status" /></td>
+              </s:if>
+              <s:elseif test='"FAILURE".equals(status)'>
+                <td class="text-danger"><s:property value="status" /></td>
+              </s:elseif>
+              <s:elseif test='"RUNNING".equals(status)'>
+                <td class="text-warning"><s:property value="status" /></td>
+              </s:elseif>
+              <s:else>
+                <td><s:property value="status" /></td>
+              </s:else>
+              <td><s:property value="startTime" /></td>
+              <td><s:property value="endTime" /></td>
+              <td>
+                <s:if test='runningTime != null'>
+                  <s:property value="runningTime" />s
+                </s:if>
+              </td>
+              <td>TODO</td>
+              <td>TODO</td>
+              <td>TODO</td>
+            </tr>
+          </s:iterator>
+        </tbody>
+      </table>
+
+      <div class="row justify-content-center">
+        <s:url var="previousJobs" action="jobs">
+          <s:param name="jobName"><s:property value="jobName" /></s:param>
+          <s:param name="limit">24</s:param>
+          <s:param name="offset"><s:property value="previousOffset" /></s:param>
+        </s:url>
+        <s:url var="nextJobs" action="jobs">
+          <s:param name="jobName"><s:property value="jobName" /></s:param>
+          <s:param name="limit">24</s:param>
+          <s:param name="offset"><s:property value="nextOffset" /></s:param>
+        </s:url>
+        <s:if test="offset > 0">
+          <a href="${previousJobs}"><- previous</a>
+        </s:if>
+        &nbsp;<s:property value="offset" /> - <s:property value="nextOffset" />&nbsp;
+        <s:if test="hashMoreExecutions">
+          <a href="${nextJobs}">next -></a>
+        </s:if>
+      </div>
+    </div>
+
   </s:if>
   <s:else>
     No job selected.

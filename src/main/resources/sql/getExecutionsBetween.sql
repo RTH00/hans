@@ -6,5 +6,6 @@ SELECT job_name,
        next_schedule_time
 FROM executions
 WHERE job_name = ?
-  AND partition >= ?
-  AND partition < ?
+ORDER BY partition DESC
+LIMIT ?
+OFFSET ?

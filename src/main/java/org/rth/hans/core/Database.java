@@ -227,11 +227,11 @@ public class Database implements AutoCloseable {
 
     // TODO add tests
     // TODO add indexes
-    public ArrayList<Execution> getExecutionsBetween(final String jobName, final Instant partitionStart, final Instant partitionEnd) throws SQLException {
+    public ArrayList<Execution> getExecutionsBetween(final String jobName, final long limit, final long offset) throws SQLException {
         final ArrayList<Execution> executions = new ArrayList<>();
         getExecutionsBetween.setString(1, jobName);
-        getExecutionsBetween.setString(2, Utils.toSqliteFormat(partitionStart));
-        getExecutionsBetween.setString(3, Utils.toSqliteFormat(partitionEnd));
+        getExecutionsBetween.setLong(2, limit);
+        getExecutionsBetween.setLong(3, offset);
         synchronized (getExecutionsBetween) {
             try (final ResultSet rs = getExecutionsBetween.executeQuery()) {
                 while(rs.next()) {

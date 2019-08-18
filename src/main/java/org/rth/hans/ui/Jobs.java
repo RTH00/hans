@@ -17,6 +17,8 @@ public class Jobs implements SessionAware {
 
     // inputs
     private String jobName;
+    private long limit = 24L;
+    private long offset = 0L;
 
     // outputs
     private ArrayList<Job> jobs;
@@ -102,7 +104,7 @@ public class Jobs implements SessionAware {
             // TODO update start instant
             final Instant now = Instant.now();
             executionInfos = Utils.map(
-                    Hans.database.getExecutionsBetween(jobName, Instant.EPOCH, Instant.now()),
+                    Hans.database.getExecutionsBetween(jobName, limit, offset),
                     exe -> new ExecutionInfo(exe, now)
             );
             executionInfos.sort(ExecutionInfo.descPartitionComparator);
@@ -135,6 +137,10 @@ public class Jobs implements SessionAware {
         this.jobName = selectedJobName;
     }
 
+    public String getJobName() {
+        return jobName;
+    }
+
     public ArrayList<ExecutionInfo> getExecutionInfos() {
         return executionInfos;
     }
@@ -145,6 +151,34 @@ public class Jobs implements SessionAware {
 
     public ArrayList<String> getCommands() {
         return commands;
+    }
+
+    public void setLimit(long limit) {
+        this.limit = limit;
+    }
+
+    public void setOffset(long offset) {
+        this.offset = offset;
+    }
+
+    public long getLimit() {
+        return limit;
+    }
+
+    public long getOffset() {
+        return offset;
+    }
+
+    public long getPreviousOffset() {
+        return Math.max(0L, offset - limit);
+    }
+
+    public long getNextOffset() {
+        return offset + limit;
+    }
+
+    public boolean getHashMoreExecutions() {
+        return executionInfos != null && limit == executionInfos.size();
     }
 
 }
